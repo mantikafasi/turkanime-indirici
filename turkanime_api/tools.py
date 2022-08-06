@@ -1,17 +1,18 @@
 from sys import exit as kapat
 import subprocess as sp
 from os import name
+
 from prompt_toolkit import styles
 from configparser import ConfigParser
 from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import SessionNotCreatedException
 
 def gereksinim_kontrol():
     """ Gereksinimlerin erişilebilir olup olmadığını kontrol eder """
     eksik=False
     stdout="\n"
-    for gereksinim in ["geckodriver","youtube-dl","mpv"]:
+    for gereksinim in ["chromedriver","youtube-dl","mpv"]:
         status = sp.Popen(f'{gereksinim} --version',stdout=sp.PIPE,stderr=sp.PIPE,shell=True).wait()
         if status>0:
             stdout += f"x {gereksinim} bulunamadı.\n"
@@ -29,21 +30,22 @@ def webdriver_hazirla(progress):
     parser = ConfigParser()
     parser.read("./config.ini")
     options = Options()
-    options.add_argument('--headless')
-    if parser.has_option("TurkAnime","firefox konumu"):
-        options.binary_location = parser.get("TurkAnime","firefox konumu")
-    profile = webdriver.FirefoxProfile()
-    profile.set_preference("dom.webdriver.enabled", False)
-    profile.set_preference('useAutomationExtension', False)
-    profile.set_preference('permissions.default.image', 2)
-    profile.set_preference("network.proxy.type", 0)
-    profile.update_preferences()
-    desired = webdriver.DesiredCapabilities.FIREFOX
+    #options.add_argument('--headless')
+    # if parser.has_option("TurkAnime","firefox konumu"):
+    #     options.binary_location = parser.get("TurkAnime","firefox konumu")
+    #options.add_argument(f"--user-data-dir=./driverdata/")
+    options.set_capability("dom.webdriver.enabled", False)
+    options.set_capability('useAutomationExtension', False)
+    options.set_capability('permissions.default.image', 2)
+    options.set_capability("network.proxy.type", 0)
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_argument('--disable-blink-features=AutomationControlled')
+
     if name == 'nt':
         try:
-            return webdriver.Firefox(
-                profile, options=options,service_log_path='NUL',
-                executable_path=r'geckodriver.exe', desired_capabilities=desired
+            return webdriver.Chrome(
+             options=options,service_log_path='NUL',
+                executable_path=r'chromedriver.exe'
             )
         except SessionNotCreatedException:
             progress.stop()
@@ -59,7 +61,7 @@ def webdriver_hazirla(progress):
                 input("Programı yeniden başlatmalısınız. (Devam etmek için entera basın)")
             kapat()
     return webdriver.Firefox(
-        profile, options=options,
+         options=options,
         service_log_path='/dev/null',desired_capabilities=desired
         )
 

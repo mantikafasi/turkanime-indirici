@@ -74,6 +74,8 @@ class Anime():
             print(" "*50+f"\r\n{i+1}. bölüm indiriliyor:")
             otosub = bool(len(self.bolumler)==1 and self.otosub)
             url = url_getir(bolum,self.driver,manualsub=otosub)
+            print(url)
+            if (type(url)==bool):continue
             suffix="--referer https://video.sibnet.ru/" if "sibnet" in url else ""
             system(f'youtube-dl --no-warnings -o "{path.join(dlfolder,self.seri,bolum)}.%(ext)s" "{url}" {suffix}')
         return True

@@ -1,13 +1,14 @@
 import re
 from sys import exit as kapat
 import subprocess as sp
-from time import time
+from time import sleep, time
 from selenium.common.exceptions import NoSuchElementException
 from rich.progress import Progress, BarColumn, SpinnerColumn
 from rich import print as rprint
 from questionary import select
 from bs4 import BeautifulSoup as bs4
 from .tools import prompt_tema
+from turkanime_api import getDataFromplayers
 
 desteklenen_players = [
     "SIBNET",
@@ -107,7 +108,7 @@ def url_getir(bolum,driver,manualsub=False):
                 progress.update(task, description=f"[cyan]{player.title()} url'si getiriliyor..")
                 try:
                     iframe_url= re.findall(
-                        r"(\/\/www.turkanime.*\/iframe\/.*)\" width",
+                        r"(\/\/www.turkanime.*\/embed\/.*)\" width",
                         driver.execute_script(f"return $.get('{uri}')")
                     )[0] if "iframe" not in uri else uri
 
@@ -119,29 +120,13 @@ def url_getir(bolum,driver,manualsub=False):
                         rprint("[red]Site Bakımda.[/red]")
                         kapat()
 
-                var_iframe = re.findall(r'{"ct".*?}',iframe_src)[0]
-                var_sifre = re.findall(r"pass.*?\'(.*)?\'",iframe_src)[0]
+                iframe = """<iframe src={} class="video-icerik" width="100%" height="450" frameborder="0" scrolling="no" wmode="transparent" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>""".format(iframe_url)
+                driver.execute_script(f"$('#zamantunelimalert').html('{iframe}')")
+                #driver.switch_to.frame(driver.find_element_by_css_selector(".video-icerik iframe"))
+                #elementi_bekle(".video-icerik",driver)
+                sleep(3)
 
-                # Türkanimenin iframe şifreleme kodu.
-                url = "https:"+driver.execute_script(f"var iframe='{var_iframe}';var pass='{var_sifre}';"+r"""
-                var CryptoJSAesJson = {
-                    stringify: function (cipherParams) {
-                        var j = {ct: cipherParams.ciphertext.toString(CryptoJS.enc.Base64)};
-                        if (cipherParams.iv) j.iv = cipherParams.iv.toString();
-                        if (cipherParams.salt) j.s = cipherParams.salt.toString();
-                        return JSON.stringify(j).replace(/\s/g, '');
-                    },
-                    parse: function (jsonStr) {
-                        console.log(jsonStr);
-                        var j = JSON.parse(jsonStr);
-                        var cipherParams = CryptoJS.lib.CipherParams.create({ciphertext: CryptoJS.enc.Base64.parse(j.ct)});
-                        if (j.iv) cipherParams.iv = CryptoJS.enc.Hex.parse(j.iv);
-                        if (j.s) cipherParams.salt = CryptoJS.enc.Hex.parse(j.s);
-                        return cipherParams;
-                    }
-                };
-                return JSON.parse(CryptoJS.AES.decrypt(iframe, pass, {format: CryptoJSAesJson}).toString(CryptoJS.enc.Utf8));
-                """)
+                url = getDataFromplayers.players[player.title().upper()](driver)
 
                 progress.update(task, description="[cyan]Video yaşıyor mu kontrol ediliyor..")
                 if check_video(url):
