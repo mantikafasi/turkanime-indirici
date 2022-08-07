@@ -13,7 +13,9 @@ Türkanime için terminal video oynatıcı ve indirici. İtinayla her bölümü 
 ```Sibnet, Odnoklassinki, Sendvid, Mail.ru, VK, Google+, Myvi, GoogleDrive, Yandisk, Vidmoly, Yourupload, Dailymotion```
 
 # Kurulum
-Önceden derlenmiş sürümleri [indirebilir](https://github.com/KebabLord/turkanime-indirici/releases/latest) ya da pip ile kolayca `pip install turkanime-cli` kurabilirsiniz. Pip ile kuruyorsanız, ya da scripti kaynak kodundan çalıştırıyorsanız mpv ve geckodriver'ın sisteminizde kurulu olduğundan ve sistem path'ında olduğundan emin olun. Konuya ilişkin rehber için [wiki sayfası](https://github.com/KebabLord/turkanime-indirici/wiki/Herhangi-bir-uygulamay%C4%B1-system-path'%C4%B1na-ekleme).
+- Bilgisayarınızda python yoksa python yükleyin
+- Bu repoyu bir klasöre boşaltıp komut dizinini açın, "pip install -r requirements.txt" yazın
+- "py turkanime.py" yazıp çalıştırın
 
  ### İzleme ekranı
  ![indirme.gif](ss_izle.gif)
