@@ -146,16 +146,14 @@ def getOKRUvid(driver):
 # SIBNET
 def getSIBNETvid(driver):
     try: # iki iframe katmanından oluşuyor
-        iframe_1 = driver.find_element_by_css_selector(".video-icerik iframe")
+        iframe_1 = driver.find_element_by_css_selector(".video-icerik")
         driver.switch_to.frame(iframe_1)
+
         iframe_2 = driver.find_element_by_css_selector("iframe")
-        driver.switch_to.frame(iframe_2)
-        url = driver.find_elements_by_tag_name('meta')[7].get_attribute('content')
+        return iframe_2.get_attribute("src")
     except Exception as e:
         print(e)
         return False
-    else:
-        return url
 
 players = { # Bütün desteklenen playerlar
     "SIBNET":getSIBNETvid,

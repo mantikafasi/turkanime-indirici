@@ -127,7 +127,8 @@ def url_getir(bolum,driver,manualsub=False):
                 sleep(3)
 
                 url = getDataFromplayers.players[player.title().upper()](driver)
-
+                if not url : continue
+                
                 progress.update(task, description="[cyan]Video yaşıyor mu kontrol ediliyor..")
                 if check_video(url):
                     progress.update(task,visible=False)
