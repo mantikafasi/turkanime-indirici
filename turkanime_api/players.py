@@ -9,6 +9,10 @@ from questionary import select
 from bs4 import BeautifulSoup as bs4
 from .tools import prompt_tema
 from turkanime_api import getDataFromplayers
+from selenium.webdriver.support import expected_conditions as EC 
+from selenium.webdriver.support.ui import WebDriverWait as wait
+from selenium.webdriver.common.by import By
+from selenium import webdriver
 
 desteklenen_players = [
     "SIBNET",
@@ -65,7 +69,7 @@ def fansub_sec(src):
     ).ask()
     return secilen_sub if secilen_sub else ""
 
-def url_getir(bolum,driver,manualsub=False):
+def url_getir(bolum,driver:webdriver.Chrome,manualsub=False):
     """ Ajax sorgularıyla tüm player url'lerini (title,url) formatında listeler
         Ardından desteklenen_player'da belirtilen hiyerarşiye göre sırayla desteklenen
         ve çalışan bir alternatif bulana dek bu listedeki playerları itere eder.
@@ -113,7 +117,7 @@ def url_getir(bolum,driver,manualsub=False):
                     )[0] if "iframe" not in uri else uri
 
                     iframe_src = driver.execute_script(f"return $.get('{iframe_url}')")
-                except IndexError:
+                except:
                     continue
                 else:
                     if "Sayfayı yenileyip tekrar deneyiniz..." in iframe_src:
@@ -122,13 +126,13 @@ def url_getir(bolum,driver,manualsub=False):
 
                 iframe = """<iframe src={} class="video-icerik" width="100%" height="450" frameborder="0" scrolling="no" wmode="transparent" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>""".format(iframe_url)
                 driver.execute_script(f"$('#zamantunelimalert').html('{iframe}')")
-                #driver.switch_to.frame(driver.find_element_by_css_selector(".video-icerik iframe"))
-                #elementi_bekle(".video-icerik",driver)
-                sleep(3)
+                wait(driver,10).until(EC.frame_to_be_available_and_switch_to_it((By.CSS_SELECTOR,".video-icerik")))
+                driver.switch_to.parent_frame()
 
-                url = getDataFromplayers.players[player.title().upper()](driver)
+                url = getPlayer(driver)
+                driver.switch_to.parent_frame()
                 if not url : continue
-                
+
                 progress.update(task, description="[cyan]Video yaşıyor mu kontrol ediliyor..")
                 if check_video(url):
                     progress.update(task,visible=False)
@@ -136,3 +140,16 @@ def url_getir(bolum,driver,manualsub=False):
                     return url
         progress.update(task,visible=False)
         return False
+
+def getPlayer(driver):
+    try:
+        iframe_1 = driver.find_element_by_css_selector(".video-icerik")
+        driver.switch_to.frame(iframe_1)
+        wait(driver,10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "iframe")))
+
+        iframe_2 = driver.find_element_by_css_selector("iframe")
+        return iframe_2.get_attribute("src")
+    except Exception as e:
+        print(e)
+        return False
+    

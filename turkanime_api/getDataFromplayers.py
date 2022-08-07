@@ -1,4 +1,7 @@
 from time import sleep
+from selenium.webdriver.support import expected_conditions as EC 
+from selenium.webdriver.support.ui import WebDriverWait as wait
+from selenium.webdriver.common.by import By
 
 # POPUP PLAYERLAR
 def getExternalVidOf(driver):
@@ -41,29 +44,6 @@ def getMailVid(driver):
     else:
         return url
 
-# FEMBED
-def getFembedVid(driver): #Fembed'de url'ye ulaşabilmek için iki kere tıklamak gerekiyor.
-    try:
-        play_button = driver.find_element_by_xpath("//div[@class='panel-body']/div[@class='video-icerik']/iframe")
-        # Video url'sini ortaya çıkartmayı dene
-        while True:
-            play_button.click()
-            sleep(2)
-            killed = killPopup()
-            if not killed:
-                sleep(1)
-                play_button.click()
-                break
-        #  Url 2 iframe katmaninin icinde sakli
-        iframe_1 = driver.find_element_by_css_selector(".video-icerik iframe")
-        driver.switch_to.frame(iframe_1)
-        iframe_2 = driver.find_element_by_css_selector("iframe")
-        driver.switch_to.frame(iframe_2)
-        url = driver.find_element_by_css_selector(".jw-video").get_attribute("src")
-    except:
-        return False
-    return url
-
 # OPENLOAD
 def getOLOADVid(driver):
     driver.find_element_by_xpath("//div[@class='panel-body']/div[@class='video-icerik']/iframe").click()
@@ -88,24 +68,10 @@ def getOLOADVid(driver):
             return url
     return False
 
-# MYVI
-def getMyviVid(driver):
-    try:
-        iframe_1 = driver.find_element_by_css_selector(".video-icerik iframe")
-        driver.switch_to.frame(iframe_1)
-        iframe_2 = driver.find_element_by_tag_name("iframe")
-        driver.switch_to.frame(iframe_2)
-        url = driver.find_elements_by_tag_name("link")[0].get_attribute("href")
-    except Exception as f:
-        print(f)
-        return False
-    else:
-        return url
-
 # VK
 def getVKvid(driver):
     try:
-        iframe_1 = driver.find_element_by_css_selector(".video-icerik iframe")
+        iframe_1 = driver.find_element_by_css_selector(".video-icerik")
         driver.switch_to.frame(iframe_1)
         iframe_2 = driver.find_element_by_tag_name("iframe")
         driver.switch_to.frame(iframe_2)
@@ -116,55 +82,18 @@ def getVKvid(driver):
     else:
         return url
 
-# Google+
-def getGPLUSvid(driver):
-    try: # iki iframe katmanından oluşuyor
-        iframe_1 = driver.find_element_by_css_selector(".video-icerik iframe")
-        driver.switch_to.frame(iframe_1)
-        iframe_2 = driver.find_element_by_css_selector("iframe")
-        driver.switch_to.frame(iframe_2)
-        url = driver.find_element_by_css_selector(".jw-media").get_attribute("src")
-    except Exception as f:
-        print(f)
-        return False
-    else:
-        return url
 
-# ODNOKLASSINKI
-def getOKRUvid(driver):
-    try: # iki iframe katmanından oluşuyor
-        iframe_1 = driver.find_element_by_css_selector(".video-icerik iframe")
-        driver.switch_to.frame(iframe_1)
-        url=driver.find_element_by_xpath('//object/param[@name="flashvars"]').get_attribute('value')
-        url="http://www.ok.ru/videoembed/"+url[url.index('mid%3D')+6:url.index('&locale=tr')]
-    except Exception as f:
-        print(f)
-        return False
-    else:
-        return url
-
-# SIBNET
-def getSIBNETvid(driver):
-    try: # iki iframe katmanından oluşuyor
-        iframe_1 = driver.find_element_by_css_selector(".video-icerik")
-        driver.switch_to.frame(iframe_1)
-
-        iframe_2 = driver.find_element_by_css_selector("iframe")
-        return iframe_2.get_attribute("src")
-    except Exception as e:
-        print(e)
-        return False
 
 players = { # Bütün desteklenen playerlar
-    "SIBNET":getSIBNETvid,
-    "FEMBED":getFembedVid,
+    "SIBNET":getDefault,
+    "FEMBED":getDefault,
     "OPENLOAD":getOLOADVid,
     "MAIL":getMailVid,
     "VK":getVKvid,
-    "GPLUS":getGPLUSvid,
-    "MYVI":getMyviVid,
+    "GPLUS":getDefault,
+    "MYVI":getDefault,
     "TÜRKANİME":getTurkanimeVid,
-    "ODNOKLASSNIKI":getOKRUvid,
+    "ODNOKLASSNIKI":getDefault,
     "RAPIDVIDEO":getExternalVidOf,
     "UMPLOMP":getExternalVidOf,
     "HDVID":getExternalVidOf,

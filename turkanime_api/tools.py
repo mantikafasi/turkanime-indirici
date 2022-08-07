@@ -34,6 +34,8 @@ def webdriver_hazirla(progress):
     # if parser.has_option("TurkAnime","firefox konumu"):
     #     options.binary_location = parser.get("TurkAnime","firefox konumu")
     #options.add_argument(f"--user-data-dir=./driverdata/")
+    options.headless = True
+    options.add_experimental_option("excludeSwitches", ["enable-logging"])
     options.set_capability("dom.webdriver.enabled", False)
     options.set_capability('useAutomationExtension', False)
     options.set_capability('permissions.default.image', 2)
