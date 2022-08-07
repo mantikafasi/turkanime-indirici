@@ -30,15 +30,12 @@ def webdriver_hazirla(progress):
     parser = ConfigParser()
     parser.read("./config.ini")
     options = Options()
-    #options.add_argument('--headless')
-    # if parser.has_option("TurkAnime","firefox konumu"):
-    #     options.binary_location = parser.get("TurkAnime","firefox konumu")
-    #options.add_argument(f"--user-data-dir=./driverdata/")
-    options.headless = True
+    #options.headless = True
     options.add_experimental_option("excludeSwitches", ["enable-logging"])
     options.set_capability("dom.webdriver.enabled", False)
     options.set_capability('useAutomationExtension', False)
     options.set_capability('permissions.default.image', 2)
+    options.add_argument("--disable-logging")
     options.set_capability("network.proxy.type", 0)
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_argument('--disable-blink-features=AutomationControlled')
@@ -64,7 +61,7 @@ def webdriver_hazirla(progress):
             kapat()
     return webdriver.Firefox(
          options=options,
-        service_log_path='/dev/null',desired_capabilities=desired
+        service_log_path='/dev/null'
         )
 
 prompt_tema = styles.Style([

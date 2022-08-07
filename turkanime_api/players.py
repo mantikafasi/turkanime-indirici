@@ -1,14 +1,13 @@
 import re
 from sys import exit as kapat
 import subprocess as sp
-from time import sleep, time
+from time import time
 from selenium.common.exceptions import NoSuchElementException
 from rich.progress import Progress, BarColumn, SpinnerColumn
 from rich import print as rprint
 from questionary import select
 from bs4 import BeautifulSoup as bs4
 from .tools import prompt_tema
-from turkanime_api import getDataFromplayers
 from selenium.webdriver.support import expected_conditions as EC 
 from selenium.webdriver.support.ui import WebDriverWait as wait
 from selenium.webdriver.common.by import By
