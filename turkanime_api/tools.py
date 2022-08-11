@@ -48,18 +48,9 @@ def webdriver_hazirla(progress):
             )
         except SessionNotCreatedException:
             progress.stop()
-            input("Program Firefox'un kurulu olduğu dizini tespit edemedi "+
-                  "Manuel olarak firefox.exe'yi seçmek için yönlendirileceksiniz.\n"+
-                  "(Devam etmek için entera basın)")
-            from easygui import fileopenbox
-            indirilenler_dizin=fileopenbox("/")
-            if indirilenler_dizin:
-                parser.set("TurkAnime","firefox konumu",indirilenler_dizin)
-                with open("./config.ini","w") as f:
-                    parser.write(f)
-                input("Programı yeniden başlatmalısınız. (Devam etmek için entera basın)")
+            input("Program Chrome'un kurulu olduğu dizini tespit edemedi.Chromedriver ve chromeun aynı sürümde olduğuna emin olun ")
             kapat()
-    return webdriver.Firefox(
+    return webdriver.Chrome(
          options=options,
         service_log_path='/dev/null'
         )
